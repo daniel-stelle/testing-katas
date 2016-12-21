@@ -1,4 +1,4 @@
-const { compose, join, repeat } = require('ramda')
+const { compose, join, reduce, repeat } = require('ramda')
 const repeatChars = compose(join(''), repeat)
 const lookupTable = [
   [1000, 'M'],
@@ -17,18 +17,16 @@ const lookupTable = [
 ]
 
 function toRoman(input) {
-  let result = ''
-  let currentArabic = input
+  const processPair = ([result, remainingInput], [arabic, roman]) => {
+    const count = Math.floor(remainingInput / arabic)
 
-  for (let [arabic, roman] of lookupTable) {
-    if (currentArabic >= arabic) {
-      const count = Math.floor(currentArabic / arabic)
-      result += repeatChars(roman, count)
-      currentArabic -= arabic * count
-    }
+    return [
+      result + repeatChars(roman, count),
+      remainingInput - (arabic * count)
+    ]
   }
 
-  return result
+  return reduce(processPair, ['', input], lookupTable)[0]
 }
 
 module.exports = toRoman
