@@ -1,4 +1,4 @@
-const { reverse, map, reduce, compose } = require('ramda')
+const { reverse, map, compose } = require('ramda')
 
 function giveChange(change, denominations = [100, 25, 10, 5, 1]) {
   const incrementCoinAmts = (denomination) => {
