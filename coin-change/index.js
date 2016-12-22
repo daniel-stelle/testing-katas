@@ -1,25 +1,23 @@
-const { reverse } = require('ramda')
+const { reverse, map, reduce, compose } = require('ramda')
 
-function giveChange(change) {
-  const denominations = [
-    [100, 0],
-    [25, 0],
-    [10, 0],
-    [5, 0],
-    [1, 0]
-  ]
-  let index = 0
+function giveChange(change, denominations = [100, 25, 10, 5, 1]) {
+  const incrementCoinAmts = (denomination) => {
+    if (change >= denomination) {
+      const numCoins = Math.floor(change / denomination)
 
-  for (let [denomination] of denominations) {
-    while (change >= denomination) {
-      denominations[index][1] += 1
-      change -= denomination
+      change %= denomination
+      return numCoins
     }
 
-    index++
+    return 0
   }
 
-  return reverse(denominations)
+  const calcChange = compose(
+    reverse,
+    map(incrementCoinAmts)
+  )
+
+  return calcChange(denominations)
 }
 
 module.exports = giveChange
