@@ -1,23 +1,27 @@
-const { reverse, map, compose } = require('ramda')
+const { map, compose, isEmpty, tail, head, append, assoc } = require('ramda')
 
-function giveChange(change, denominations = [100, 25, 10, 5, 1]) {
-  const incrementCoinAmts = (denomination) => {
-    if (change >= denomination) {
-      const numCoins = Math.floor(change / denomination)
+function giveChange(
+  change,
+  denominations = [100, 25, 10, 5, 1]
+) {
+  if (change === 0 || isEmpty(denominations)) return {}
 
-      change %= denomination
-      return numCoins
-    }
+  const denomination = head(denominations)
+  const numCoins = Math.floor(change / denomination)
 
-    return 0
+  if (change >= denomination) {
+    return assoc(denomination, numCoins, giveChange(change - denomination, denominations))
   }
 
-  const calcChange = compose(
-    reverse,
-    map(incrementCoinAmts)
-  )
-
-  return calcChange(denominations)
+  return giveChange(change, tail(denominations))
 }
 
 module.exports = giveChange
+
+// mergeAll(map(value => { value: 0 }))
+//
+// if (change >= denomination) {
+//   return append(denomination, giveChange(change - denomination, denominations))
+// } else {
+//   return giveChange(change, tail(denominations))
+// }
